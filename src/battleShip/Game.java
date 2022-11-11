@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 
 public class Game {
 	
-	//testing git hub
 
 	public static void main(String[] args) {
 		String menuOption;
