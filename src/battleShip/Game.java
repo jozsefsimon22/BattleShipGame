@@ -3,7 +3,11 @@ package battleShip;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.SecureCacheResponse;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -13,13 +17,27 @@ public class Game {
 	public static void main(String[] args) {
 		// Class variables
 		String menuOption;
-		ArrayList<User> users;
-
+		String nameInput;
+		String welcomeMessage;
+		User currentPlayer;
+		Grid map;
+		ArrayList<User> users = new ArrayList<User>();
+		
+		System.out.println("Should be empty " + users.toString());
+//		users.add(player("Jozsika"));
+//		System.out.println("Added Jozsika " + users.toString());
+		//Writing out the arraylist;
+//		writeOutUsers(users);
+//		System.out.println("Wrote it out to the file" + users.toString());
 		// Reading in existing/previous users
 		users = readInUsers();
+//		users.add(player("Jozsika 2"));
+//		System.out.println("Added Jozsika 2" + users.toString());
+		System.out.println("Read it in from the file " + users.toString());
+		System.out.println("Read it in from the file " + users.size());
 
 		// Printing welcome message to the user and asking for a name input
-		String currentPlayerName = JOptionPane.showInputDialog(null,
+		nameInput = JOptionPane.showInputDialog(null,
 				"Welcome to the BattleShip 2022 Game!\n\n Please enter your name:", "Welcome",
 				JOptionPane.INFORMATION_MESSAGE);
 
@@ -27,11 +45,22 @@ public class Game {
 		// FUNCTION TO CHECK IF THE USER EXISTS IN THE DATABASE IF YES PRINT WELCOME
 		// BACK MESSAGE AND DON'T ADD IT TO THE USER LIST JUST SET IT TO THE CURRENT
 		// USER
-		User currentPlayer = player(currentPlayerName);
-		users.add(currentPlayer);
+		currentPlayer = validateUser(nameInput, users);
+		System.out.println("After user input" + users.toString());
+		System.out.println("After user input " + users.size());
+		
+		if(!users.contains(currentPlayer)) {
+			users.add(currentPlayer);
+			welcomeMessage = "Welcome " + nameInput;
+		}
+		else {
+			welcomeMessage = "Welcome back " + currentPlayer.getName();
+		}
+		System.out.println("After validating user " + users.toString());
+		System.out.println("After validating user " + users.size());
 
 		// Game starts here
-		JOptionPane.showMessageDialog(null, "Welcome " + users.get(0).getName(), "BattleShip 2022",
+		JOptionPane.showMessageDialog(null, welcomeMessage, "BattleShip 2022",
 				JOptionPane.INFORMATION_MESSAGE);
 
 		menuOption = menu().toLowerCase();
@@ -43,7 +72,7 @@ public class Game {
 				JOptionPane.showMessageDialog(null, "New Game");
 
 				// Generating a grid with ships added
-				Grid map = newMap();
+				map = newMap();
 
 				// Calling the game function to start a new regular game
 				game(map, "", currentPlayer);
@@ -57,7 +86,7 @@ public class Game {
 				JOptionPane.showMessageDialog(null, "Debug Mode");
 
 				// Generating a grid with ships added
-				Grid map = newMap();
+				map = newMap();
 
 				// Calling the game method to start a new game in debug mode
 				game(map, "debug", currentPlayer);
@@ -76,6 +105,8 @@ public class Game {
 			}
 		}
 
+		writeOutUsers(users);
+		System.out.println("After exit " + users.toString());
 		JOptionPane.showMessageDialog(null, "Goodbye!");
 
 	}// End of main method
@@ -237,12 +268,59 @@ public class Game {
 			}
 			fileInput.close();
 			objectInput.close();
-		} catch (Exception e) {
-			System.out.println("Error");
+		}
+		catch (FileNotFoundException fileNotFound) {
+			System.out.println("File not found");
+		}
+		catch (Exception e) {
+			System.out.println("Error reading file in");
 		}
 
 		return output;
 
 	}
 
+	// This method writes the user objects out to a .txt file
+	public static void writeOutUsers(ArrayList<User> users) {
+		// Method variables
+		FileOutputStream fileOutput;
+		ObjectOutputStream objectOutput;
+		User user;
+
+		try {
+			fileOutput = new FileOutputStream(new File("userData.txt"));
+			objectOutput = new ObjectOutputStream(fileOutput);
+
+			for (int loop = 0; loop < users.size(); loop++) {
+				user = users.get(loop);
+				objectOutput.writeObject(user);
+			}
+		} catch (Exception e) {
+			System.out.println("Error writing file out");
+		}
+
+	}
+
+	// This method checks if the current user is already in the database based on
+	// the name input. If it's in the database it return the corresponding User
+	// object, if it's not it creates a new user objects and returns it
+	public static User validateUser(String name, ArrayList<User> users) {
+		User currentPlayer;
+		User user;
+
+		for (int loop = 0; loop < users.size(); loop++) {
+			user = users.get(loop);
+			System.out.println("Loop in for statment round " + loop);
+			if (user.getName().toLowerCase().equals(name.toLowerCase())) {
+				currentPlayer = user;
+				System.out.println("Loop in if statment round " + loop);
+				return currentPlayer;
+			} 
+		}
+		
+		currentPlayer = player(name);
+		System.out.println(currentPlayer.getName());
+		return currentPlayer;
+
+	}
 }// End of class
