@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.SecureCacheResponse;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
@@ -31,7 +32,8 @@ public class Game {
 				"Welcome to the BattleShip 2022 Game!\n\n Please enter your name:", "Welcome",
 				JOptionPane.INFORMATION_MESSAGE);
 
-		// Setting the current player. If it's a new player it's added o the users ArrayList
+		// Setting the current player. If it's a new player it's added o the users
+		// ArrayList
 		currentPlayer = validateUser(nameInput, users);
 
 		if (!users.contains(currentPlayer)) {
@@ -75,7 +77,7 @@ public class Game {
 				menuOption = menu().toLowerCase();
 			} else if (menuOption.equals("h")) {
 				JOptionPane.showMessageDialog(null, "High-Score Table");
-				JOptionPane.showMessageDialog(null, currentPlayer.getHighestScore());
+				highScoreTable(users);
 				menuOption = menu().toLowerCase();
 			} else if (menuOption.equals("e")) {
 				JOptionPane.showMessageDialog(null, "Exiting Game");
@@ -305,4 +307,25 @@ public class Game {
 		return currentPlayer;
 
 	}
+
+	// This method generates a string representation of the high-score table
+	public static void highScoreTable(ArrayList<User> users) {
+		String output = "";
+//		String space = "       ";
+		User user;
+
+		Collections.sort(users, User.sortByUserScoreDesc);
+
+		for (int loop = 0; loop < users.size(); loop++) {
+			user = users.get(loop);
+			output += (loop + 1) + ".\t\t\t";
+			output += "Name: ";
+			output += user.getName() + "\t\t\t";
+			output += "Score: ";
+			output += user.getHighestScore() + "\n";
+		}
+
+			JOptionPane.showMessageDialog(null, output,"High-Score Table", JOptionPane.INFORMATION_MESSAGE);
+	}
+
 }// End of class

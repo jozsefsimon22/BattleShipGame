@@ -1,5 +1,6 @@
 package battleShip;
 import java.io.Serializable;
+import java.util.Comparator;
 
 public class User implements Serializable{
 	private static final long serialVersionUID = 1l;
@@ -28,5 +29,15 @@ public class User implements Serializable{
 			setHighestScore(score);
 		}
 	}
+	
+	public static Comparator<User> sortByUserScoreDesc = new Comparator<User>() {
+		public int compare(User user1, User user2) {
+			int score1 = user1.getHighestScore();
+			int score2 = user2.getHighestScore();
+			
+			return score2 - score1;
+		}
+		
+	};
 
 }
