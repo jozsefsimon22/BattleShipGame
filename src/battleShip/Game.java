@@ -22,46 +22,26 @@ public class Game {
 		User currentPlayer;
 		Grid map;
 		ArrayList<User> users = new ArrayList<User>();
-		
-		System.out.println("Should be empty " + users.toString());
-//		users.add(player("Jozsika"));
-//		System.out.println("Added Jozsika " + users.toString());
-		//Writing out the arraylist;
-//		writeOutUsers(users);
-//		System.out.println("Wrote it out to the file" + users.toString());
+
 		// Reading in existing/previous users
 		users = readInUsers();
-//		users.add(player("Jozsika 2"));
-//		System.out.println("Added Jozsika 2" + users.toString());
-		System.out.println("Read it in from the file " + users.toString());
-		System.out.println("Read it in from the file " + users.size());
 
 		// Printing welcome message to the user and asking for a name input
 		nameInput = JOptionPane.showInputDialog(null,
 				"Welcome to the BattleShip 2022 Game!\n\n Please enter your name:", "Welcome",
 				JOptionPane.INFORMATION_MESSAGE);
 
-		// Setting the current player and adding it the the player list// <<ADD A
-		// FUNCTION TO CHECK IF THE USER EXISTS IN THE DATABASE IF YES PRINT WELCOME
-		// BACK MESSAGE AND DON'T ADD IT TO THE USER LIST JUST SET IT TO THE CURRENT
-		// USER
+		// Setting the current player. If it's a new player it's added o the users ArrayList
 		currentPlayer = validateUser(nameInput, users);
-		System.out.println("After user input" + users.toString());
-		System.out.println("After user input " + users.size());
-		
-		if(!users.contains(currentPlayer)) {
+
+		if (!users.contains(currentPlayer)) {
 			users.add(currentPlayer);
 			welcomeMessage = "Welcome " + nameInput;
-		}
-		else {
+		} else {
 			welcomeMessage = "Welcome back " + currentPlayer.getName();
 		}
-		System.out.println("After validating user " + users.toString());
-		System.out.println("After validating user " + users.size());
 
-		// Game starts here
-		JOptionPane.showMessageDialog(null, welcomeMessage, "BattleShip 2022",
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, welcomeMessage, "BattleShip 2022", JOptionPane.INFORMATION_MESSAGE);
 
 		menuOption = menu().toLowerCase();
 
@@ -106,7 +86,6 @@ public class Game {
 		}
 
 		writeOutUsers(users);
-		System.out.println("After exit " + users.toString());
 		JOptionPane.showMessageDialog(null, "Goodbye!");
 
 	}// End of main method
@@ -235,6 +214,7 @@ public class Game {
 
 	}
 
+	// This method takes in a user name and generates and returns a new user object
 	public static User player(String name) {
 		User player;
 
@@ -268,11 +248,9 @@ public class Game {
 			}
 			fileInput.close();
 			objectInput.close();
-		}
-		catch (FileNotFoundException fileNotFound) {
+		} catch (FileNotFoundException fileNotFound) {
 			System.out.println("File not found");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("Error reading file in");
 		}
 
@@ -281,7 +259,10 @@ public class Game {
 	}
 
 	// This method writes the user objects out to a .txt file
+
+	// This method writes the user objects out to a .txt file
 	public static void writeOutUsers(ArrayList<User> users) {
+
 		// Method variables
 		FileOutputStream fileOutput;
 		ObjectOutputStream objectOutput;
@@ -304,22 +285,23 @@ public class Game {
 	// This method checks if the current user is already in the database based on
 	// the name input. If it's in the database it return the corresponding User
 	// object, if it's not it creates a new user objects and returns it
+
+	// This method checks if a user has been previously created based on the user
+	// name input. If the user has already been created, it return the corresponding
+	// user object. If not, it creates a new user object and returns it.
 	public static User validateUser(String name, ArrayList<User> users) {
 		User currentPlayer;
 		User user;
 
 		for (int loop = 0; loop < users.size(); loop++) {
 			user = users.get(loop);
-			System.out.println("Loop in for statment round " + loop);
 			if (user.getName().toLowerCase().equals(name.toLowerCase())) {
 				currentPlayer = user;
-				System.out.println("Loop in if statment round " + loop);
 				return currentPlayer;
-			} 
+			}
 		}
-		
+
 		currentPlayer = player(name);
-		System.out.println(currentPlayer.getName());
 		return currentPlayer;
 
 	}
