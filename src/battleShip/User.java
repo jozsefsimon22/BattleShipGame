@@ -1,6 +1,8 @@
 package battleShip;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable{
+	private static final long serialVersionUID = 1l;
 	final private String name;
 	private int highestScore;
 
@@ -21,6 +23,10 @@ public class User {
 		return name;
 	}
 	
-	
+	public void checkHighestScore(int score) {
+		if(this.highestScore < score) {
+			setHighestScore(score);
+		}
+	}
 
 }

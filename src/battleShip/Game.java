@@ -1,27 +1,39 @@
 package battleShip;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 public class Game {
-	
 
 	public static void main(String[] args) {
+		// Class variables
 		String menuOption;
-		ArrayList<User> users = new ArrayList<User>();
-		
-		
-		String currentPlayerName = JOptionPane.showInputDialog(null, "Welcome to the BattleShip 2022 Game!\n\n Please enter your name:","Welcome", JOptionPane.INFORMATION_MESSAGE);
-		
-		
-		
-		
+		ArrayList<User> users;
+
+		// Reading in existing/previous users
+		users = readInUsers();
+
+		// Printing welcome message to the user and asking for a name input
+		String currentPlayerName = JOptionPane.showInputDialog(null,
+				"Welcome to the BattleShip 2022 Game!\n\n Please enter your name:", "Welcome",
+				JOptionPane.INFORMATION_MESSAGE);
+
+		// Setting the current player and adding it the the player list// <<ADD A
+		// FUNCTION TO CHECK IF THE USER EXISTS IN THE DATABASE IF YES PRINT WELCOME
+		// BACK MESSAGE AND DON'T ADD IT TO THE USER LIST JUST SET IT TO THE CURRENT
+		// USER
 		User currentPlayer = player(currentPlayerName);
 		users.add(currentPlayer);
-		
-		JOptionPane.showMessageDialog(null, "Welcome " + users.get(0).getName(),"BattleShip 2022", JOptionPane.INFORMATION_MESSAGE);
-		
+
+		// Game starts here
+		JOptionPane.showMessageDialog(null, "Welcome " + users.get(0).getName(), "BattleShip 2022",
+				JOptionPane.INFORMATION_MESSAGE);
+
 		menuOption = menu().toLowerCase();
 
 		while (!menuOption.equals("e")) {
@@ -34,7 +46,7 @@ public class Game {
 				Grid map = newMap();
 
 				// Calling the game function to start a new regular game
-				game(map, "");
+				game(map, "", currentPlayer);
 
 				menuOption = menu().toLowerCase();
 
@@ -48,12 +60,13 @@ public class Game {
 				Grid map = newMap();
 
 				// Calling the game method to start a new game in debug mode
-				game(map, "debug");
+				game(map, "debug", currentPlayer);
 
 				// Presenting the main menu to the user
 				menuOption = menu().toLowerCase();
-			} else if (menuOption.equals("s")) {
-				JOptionPane.showMessageDialog(null, "Scores Game");
+			} else if (menuOption.equals("h")) {
+				JOptionPane.showMessageDialog(null, "High-Score Table");
+				JOptionPane.showMessageDialog(null, currentPlayer.getHighestScore());
 				menuOption = menu().toLowerCase();
 			} else if (menuOption.equals("e")) {
 				JOptionPane.showMessageDialog(null, "Exiting Game");
@@ -62,7 +75,7 @@ public class Game {
 				menuOption = menu().toLowerCase();
 			}
 		}
-		
+
 		JOptionPane.showMessageDialog(null, "Goodbye!");
 
 	}// End of main method
@@ -102,17 +115,18 @@ public class Game {
 		menuDisplay = "N - New Game" + "\n";
 		menuDisplay += "L - Load Game" + "\n";
 		menuDisplay += "D - Debug Mode" + "\n";
-		menuDisplay += "S - Scores" + "\n";
+		menuDisplay += "H - High-Score Table" + "\n";
 		menuDisplay += "E - Exit" + "\n";
 
-		menuInput = JOptionPane.showInputDialog(null,"Please select an option:\n\n" + menuDisplay,"BattleShip 2022", JOptionPane.INFORMATION_MESSAGE).toLowerCase();
+		menuInput = JOptionPane.showInputDialog(null, "Please select an option:\n\n" + menuDisplay, "BattleShip 2022",
+				JOptionPane.INFORMATION_MESSAGE).toLowerCase();
 
 		return menuInput;
 
 	}
 
 	// This method generates a new game
-	public static void game(Grid map, String mode) {
+	public static void game(Grid map, String mode, User player) {
 		String statusBar;
 		String rowInputAsString;
 		String columnInputAsString;
@@ -164,7 +178,8 @@ public class Game {
 					message += "\nYou got +" + targetedLocation.ship.getPoints() + " points!";
 					score += targetedLocation.ship.getPoints();
 //					sinkedShips += map.returnOneShipsAllLocationAsString(targetedLocation.ship, map); 
-					sinkedShips += "\t" + targetedLocation.ship.getType() +": " + targetedLocation.ship.positions +"\n";
+					sinkedShips += "\t" + targetedLocation.ship.getType() + ": " + targetedLocation.ship.positions
+							+ "\n";
 //					sinkedShips += targetedLocation.ship.positionsArray.toString();
 					targetedLocation.ship.destroyShip();
 				}
@@ -183,7 +198,9 @@ public class Game {
 		gameOverMessage += "\nShips sinked";
 		gameOverMessage += "\n" + sinkedShips;
 
-		JOptionPane.showMessageDialog(null, gameOverMessage);
+		JOptionPane.showMessageDialog(null, gameOverMessage, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+
+		player.checkHighestScore(score);
 
 	}
 
@@ -193,6 +210,39 @@ public class Game {
 		player = new User(name);
 
 		return player;
+	}
+
+	// This method reads in user objects from a .txt file and returns an ArrayList
+	// with the objects
+	public static ArrayList<User> readInUsers() {
+		// Method variables
+		ArrayList<User> output;
+		FileInputStream fileInput;
+		ObjectInputStream objectInput;
+		User user;
+
+		// Initialising method variables, reading users and adding user objects to the
+		// output ArrayList
+		output = new ArrayList<User>();
+		try {
+			fileInput = new FileInputStream(new File("userData.txt"));
+			objectInput = new ObjectInputStream(fileInput);
+			while (true) {
+				try {
+					user = (User) objectInput.readObject();
+					output.add(user);
+				} catch (EOFException endOfFile) {
+					break;
+				}
+			}
+			fileInput.close();
+			objectInput.close();
+		} catch (Exception e) {
+			System.out.println("Error");
+		}
+
+		return output;
+
 	}
 
 }// End of class
