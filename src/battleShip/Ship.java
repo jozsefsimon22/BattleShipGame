@@ -1,10 +1,12 @@
 package battleShip;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Ship {
+public class Ship implements Serializable{
 	// Class attributes
+	private static final long serialVersionUID = 1l;
 	private String type;
 	private int direction;
 	private int startingPositionX;

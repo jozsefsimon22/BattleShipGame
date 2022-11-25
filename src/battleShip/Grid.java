@@ -1,8 +1,10 @@
 package battleShip;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Grid {
+public class Grid implements Serializable{
+	private static final long serialVersionUID = 1l;
 	final int length = 10;
 	final int width = 10;
 
@@ -21,16 +23,6 @@ public class Grid {
 		}
 	} // End of constructor 
 
-	// Printing out the grid and its number <<<<<<<<<TO BE DELETED
-	public void itterate() {
-		for (int row = 0; row < grid.length; row++) {
-			System.out.println("Row: " + row);
-			for (int column = 0; column < grid[row].length; column++) {
-				System.out.println(
-						" Column " + column + " : " + grid[row][column].number + " Ship: " + grid[row][column].ship);
-			}
-		}
-	}
 
 	// This method adds a ship to multiple 'Square' objects for the whole length of
 	// the ship
@@ -80,24 +72,7 @@ public class Grid {
 		return isThereAShip;
 	}
 
-//	public String returnOneShipsAllLocationAsString(Ship ship, Grid map) {
-//		String output;
-//
-//		output = "\t" + ship.getType() + ": ";
-//
-//		for (int row = 0; row < map.length; row++) {
-//			for (int column = 0; column < map.grid[row].length; column++) {
-//				if (map.grid[row][column].ship == ship) {
-//					output += " (" + row + ", " + column + ")";
-//				}
-//			}
-//		}
-//		output += "\n";
-//
-//		return output;
-//
-//	}
-
+	// Returns all ships location as String
 	public String returnAllShipsAllLocationAsString() {
 		ArrayList<Ship> ships = new ArrayList<Ship>();
 		String output = "";
@@ -126,11 +101,4 @@ public class Grid {
 		return output;
 
 	}
-
-//<<<<<<<<<<<<<<<<<<THIS CAN BE DELETED BECAUSE INT THE SQUARE FUNCTION IT IS LAREADY IMPLEMENTED>>>>>>>>>>>>>>>>>>>>>>>>
-//	public boolean isThereAShipGrid(int row, int column) {
-//		boolean output;
-//		output = this.grid[row][column].isThereAShip();
-//		return output;
-//	}
 }

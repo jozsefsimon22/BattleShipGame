@@ -1,6 +1,9 @@
 package battleShip;
 
-public class Square {
+import java.io.Serializable;
+
+public class Square implements Serializable{
+	private static final long serialVersionUID = 1l;
 	int number;
 	Ship ship;
 	boolean bombedAt = false;
